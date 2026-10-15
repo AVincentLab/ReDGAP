@@ -43,7 +43,37 @@ printFilter <- function(df, param, numLines) {
 }
 
 ############################################################################
-# IMPORT DATA
+# OPTIONS FOR QUALITY FILTERS (questions are asked now, so the rest of the script can run without waiting)
+############################################################################
+if (interactive()) {
+  ans2 <- tolower(trimws(readline("Do you want to keep only variants with FILTER == PASS? [yes/no]: ")))
+  ans3 <- tolower(trimws(readline("Do you want to keep only variants with read depth between 5-120? [yes/no]: ")))
+}
+
+############################################################################
+# ADD GENE PANEL (Optional)
+############################################################################
+panel_pattern <- NULL
+
+if (interactive()) {
+  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
+}
+if (exists("ans1") && ans1 %in% c("y", "yes") && "gene_symbol" %in% colnames(dfall)) {
+  print('Input gene panel file')
+  panelFile <- file.choose()
+  print(panelFile)
+  if (!tolower(tools::file_ext(panelFile)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
+    stop("Unsupported file format", call. = FALSE)
+  }
+  panel <- read.table(panelFile, header = TRUE, colClasses = "character")
+  cat("Number of panel genes:", nrow(panel), "\n")
+
+  panel_genes   <- panel[[1]]
+  panel_pattern <- paste(paste0("(^|[;|])", panel_genes, "($|[;|])"), collapse = "|")
+}
+
+############################################################################
+# IMPORT PATIENT DATA
 ############################################################################
 print('Input patient file')
 fileName <- file.choose()
@@ -114,41 +144,13 @@ for (f in af_filters) {
 }
 
 ############################################################################
-# ADD GENE PANEL (Optional)
-############################################################################
-panel_pattern <- NULL
-
-if (interactive()) {
-  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
-}
-if (exists("ans1") && ans1 %in% c("y", "yes") && "gene_symbol" %in% colnames(dfall)) {
-  print('Input gene panel file')
-  panelFile <- file.choose()
-  print(panelFile)
-  if (!tolower(tools::file_ext(panelFile)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
-    stop("Unsupported file format", call. = FALSE)
-  }
-  panel <- read.table(panelFile, header = TRUE, colClasses = "character")
-  cat("Number of panel genes:", nrow(panel), "\n")
-
-  panel_genes   <- panel[[1]]
-  panel_pattern <- paste(paste0("(^|[;|])", panel_genes, "($|[;|])"), collapse = "|")
-}
-
-############################################################################
 # QUALITY FILTERS (Optional)
 ############################################################################
-if (interactive()) {
-  ans2 <- tolower(readline("Do you want to keep only variants with FILTER == PASS? [yes/no]: "))
-}
 if (exists("ans2") && ans2 %in% c("y", "yes") && "FILTER" %in% colnames(dfall)) {
   dfall <- dfall[dfall$FILTER %in% "PASS", ]
   log_step("Variants with FILTER != PASS were removed", nrow(dfall))
 }
 
-if (interactive()) {
-  ans3 <- tolower(readline("Do you want to keep only variants with read depth between 5-120? [yes/no]: "))
-}
 if (exists("ans3") && ans3 %in% c("y", "yes") && "newDP" %in% colnames(dfall)) {
   dp <- suppressWarnings(as.numeric(dfall$newDP))
   dfall <- dfall[!is.na(dp) & dp >= 5 & dp <= 120, ]
