@@ -51,28 +51,6 @@ if (interactive()) {
 }
 
 ############################################################################
-# ADD GENE PANEL (Optional)
-############################################################################
-panel_pattern <- NULL
-
-if (interactive()) {
-  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
-}
-if (exists("ans1") && ans1 %in% c("y", "yes") && "gene_symbol" %in% colnames(dfall)) {
-  print('Input gene panel file')
-  panelFile <- file.choose()
-  print(panelFile)
-  if (!tolower(tools::file_ext(panelFile)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
-    stop("Unsupported file format", call. = FALSE)
-  }
-  panel <- read.table(panelFile, header = TRUE, colClasses = "character")
-  cat("Number of panel genes:", nrow(panel), "\n")
-
-  panel_genes   <- panel[[1]]
-  panel_pattern <- paste(paste0("(^|[;|])", panel_genes, "($|[;|])"), collapse = "|")
-}
-
-############################################################################
 # IMPORT PATIENT DATA
 ############################################################################
 print('Input patient file')
@@ -113,6 +91,28 @@ if (all(c("AD_ALT", "AD_REF") %in% colnames(dfall))) {
 
 # Variant Score Column
 dfall$VScore <- 0   # Create Variant score column that will be added to later
+
+############################################################################
+# ADD GENE PANEL (Optional)
+############################################################################
+panel_pattern <- NULL
+
+if (interactive()) {
+  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
+}
+if (exists("ans1") && ans1 %in% c("y", "yes") && "gene_symbol" %in% colnames(dfall)) {
+  print('Input gene panel file')
+  panelFile <- file.choose()
+  print(panelFile)
+  if (!tolower(tools::file_ext(panelFile)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
+    stop("Unsupported file format", call. = FALSE)
+  }
+  panel <- read.table(panelFile, header = TRUE, colClasses = "character")
+  cat("Number of panel genes:", nrow(panel), "\n")
+
+  panel_genes   <- panel[[1]]
+  panel_pattern <- paste(paste0("(^|[;|])", panel_genes, "($|[;|])"), collapse = "|")
+}
 
 ############################################################################
 # FILTERING FOR ALLELE FREQUENCY
