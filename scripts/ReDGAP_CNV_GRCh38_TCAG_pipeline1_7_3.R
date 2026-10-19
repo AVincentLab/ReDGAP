@@ -65,11 +65,35 @@ near_exon <- function(df, col, cutoff) {
 }
 
 ############################################################################
+# IMPORT DATA
+############################################################################
+print('Input patient file')
+fileName <- file.choose()
+if (!tolower(tools::file_ext(fileName)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
+  stop("Unsupported file format", call. = FALSE)
+}
+outName  <- sub("\\..*$", "", basename(fileName))
+repTimes <- length(strsplit(readLines(fileName, n = 1), ',')[[1]])
+dfall <- fread(fileName, colClasses = rep('character', repTimes),
+                na.strings = "NA", data.table = FALSE)
+names(dfall) <- sapply(strsplit(names(dfall), ':'), function(i) i[[length(i)]])
+
+numLines <- nrow(dfall)
+cat("Initial row count:", numLines, "\n")
+log_step("Initial number of CNVs", numLines)
+
+# Convert empty value to NA
+dfall[] <- lapply(dfall, function(x) {x[x==""] <- NA; x})
+
+# Variant Score Column
+dfall$VScore <- 0   # Create Variant score column that will be added to later
+
+############################################################################
 # OPTIONS (both questions are asked now, so the rest of the script can run without waiting)
 ############################################################################
 if (interactive()) {
-  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
   ans2 <- tolower(trimws(readline("Do you want to remove CNVs overlapping polymorphic regions by >= 70% (dirtyRegion)? [yes/no]: ")))
+  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
 }
 
 ############################################################################
@@ -96,30 +120,6 @@ if (exists("ans1") && ans1 %in% c("y", "yes")) {
     panel_pattern <- paste(paste0("(^|[;|])", panel_genes, "($|[;|])"), collapse = "|")
   }
 }
-
-############################################################################
-# IMPORT DATA
-############################################################################
-print('Input patient file')
-fileName <- file.choose()
-if (!tolower(tools::file_ext(fileName)) %in% c('tsv', 'csv', 'txt', 'dsv')) {
-  stop("Unsupported file format", call. = FALSE)
-}
-outName  <- sub("\\..*$", "", basename(fileName))
-repTimes <- length(strsplit(readLines(fileName, n = 1), ',')[[1]])
-dfall <- fread(fileName, colClasses = rep('character', repTimes),
-                na.strings = "NA", data.table = FALSE)
-names(dfall) <- sapply(strsplit(names(dfall), ':'), function(i) i[[length(i)]])
-
-numLines <- nrow(dfall)
-cat("Initial row count:", numLines, "\n")
-log_step("Initial number of CNVs", numLines)
-
-# Convert empty value to NA
-dfall[] <- lapply(dfall, function(x) {x[x==""] <- NA; x})
-
-# Variant Score Column
-dfall$VScore <- 0   # Create Variant score column that will be added to later
 
 ############################################################################
 # VARIANT SCORING
