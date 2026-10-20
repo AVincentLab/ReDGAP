@@ -43,14 +43,6 @@ printFilter <- function(df, param, numLines) {
 }
 
 ############################################################################
-# OPTIONS FOR QUALITY FILTERS (questions are asked now, so the rest of the script can run without waiting)
-############################################################################
-if (interactive()) {
-  ans2 <- tolower(trimws(readline("Do you want to keep only variants with FILTER == PASS? [yes/no]: ")))
-  ans3 <- tolower(trimws(readline("Do you want to keep only variants with read depth between 5-120? [yes/no]: ")))
-}
-
-############################################################################
 # IMPORT PATIENT DATA
 ############################################################################
 print('Input patient file')
@@ -91,6 +83,14 @@ if (all(c("AD_ALT", "AD_REF") %in% colnames(dfall))) {
 
 # Variant Score Column
 dfall$VScore <- 0   # Create Variant score column that will be added to later
+
+############################################################################
+# OPTIONS FOR QUALITY FILTERS (questions are asked now, so the rest of the script can run without waiting)
+############################################################################
+if (interactive()) {
+  ans2 <- tolower(trimws(readline("Do you want to keep only variants with FILTER == PASS? [yes/no]: ")))
+  ans3 <- tolower(trimws(readline("Do you want to keep only variants with read depth between 5-120? [yes/no]: ")))
+}
 
 ############################################################################
 # ADD GENE PANEL (Optional)
