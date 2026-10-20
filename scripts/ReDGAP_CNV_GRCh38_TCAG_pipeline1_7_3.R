@@ -205,7 +205,10 @@ if (!is.null(clinical)) {
   cat("Unique CNVs overlapping ClinGen, decipher, or ClinVar:", nrow(clinical), "\n")
   log_step("Number of unique CNVs overlapping 30%+ ClinGen, decipher, or ClinVar CNVs", nrow(clinical))
 }
-
+       
+clinvar_path_SV <- if ("ClinVar_ClinSign" %in% colnames(dfall)) 
+  dfall[clinvar_path(dfall), ] else NULL
+       
 ############################################################################
 # FILTERING FOR ALLELE FREQUENCY
 # Frequency columns from the TCAG pipeline are in percent, except gnomAD (fraction)
@@ -304,7 +307,7 @@ if ("Fantom5DPI" %in% colnames(genic)) {
 ############################################################################
 # ASSEMBLE THE HIGH IMPACT CNV LIST
 ############################################################################
-strong_parts <- list(clinical, CDS, spli, F5, panelCNV)
+strong_parts <- list(CDS, spli, F5, clinvar_path_SV)
 strong_parts <- strong_parts[!sapply(strong_parts, is.null)]
 
 if (length(strong_parts) > 0) {
@@ -314,7 +317,7 @@ if (length(strong_parts) > 0) {
 } else {
   strong_CNV <- dfall[0, ]
 }
-log_step("High impact: CNVs in ClinGen/decipher/ClinVar, or rare in panel, CDS, splicing regions or promoters", nrow(strong_CNV))
+log_step("High impact: CNVs in CDS, splicing or regulatory regions, or P/LP in ClinVar", nrow(strong_CNV))
 
 ############################################################################
 # WRITE OUT THE DATA
@@ -323,7 +326,7 @@ FilterRows <- data.frame(Step = Counter$Step, Count = Counter$Count, stringsAsFa
 
 sheets <- list(
   CNV_Analysis_Pipeline = FilterRows,
-  High_impact_CNV       = strong_CNV,
+  Strong_CNV            = strong_CNV,
   rare_CNV              = rare,
   Genic_CNV             = genic,
   clin_db_CNV           = clinical    # NULL (and skipped) if no ClinGen/decipher/ClinVar columns exist
