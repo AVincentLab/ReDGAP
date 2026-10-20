@@ -98,8 +98,8 @@ dfall$VScore <- 0   # Create Variant score column that will be added to later
 # OPTIONS (both questions are asked now, so the rest of the script can run without waiting)
 ############################################################################
 if (interactive()) {
-  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
   ans2 <- tolower(trimws(readline("Do you want to remove SVs overlapping polymorphic regions by >= 70% (dirtyRegion)? [yes/no]: ")))
+  ans1 <- tolower(trimws(readline("Do you want to use a panel? [yes/no]: ")))
 }
 
 ############################################################################
@@ -212,6 +212,9 @@ if (!is.null(clinical)) {
   log_step("Number of unique SVs overlapping 30%+ ClinGen, decipher, or ClinVar SVs", nrow(clinical))
 }
 
+clinvar_path_SV <- if ("ClinVar_ClinSign" %in% colnames(dfall)) 
+  dfall[clinvar_path(dfall), ] else NULL       
+
 ############################################################################
 # FILTERING FOR ALLELE FREQUENCY
 # Frequency columns from the TCAG pipeline are in percent, except gnomAD (fraction)
@@ -310,7 +313,7 @@ if ("Fantom5DPI" %in% colnames(genic)) {
 ############################################################################
 # ASSEMBLE THE HIGH IMPACT SV LIST
 ############################################################################
-strong_parts <- list(clinical, CDS, spli, F5, panelSV)
+strong_parts <- list(CDS, spli, F5, clinvar_path_SV)
 strong_parts <- strong_parts[!sapply(strong_parts, is.null)]
 
 if (length(strong_parts) > 0) {
@@ -320,7 +323,7 @@ if (length(strong_parts) > 0) {
 } else {
   strong_SV <- dfall[0, ]
 }
-log_step("High impact: SVs in ClinGen/decipher/ClinVar, or rare in panel, CDS, splicing regions or promoters", nrow(strong_SV))
+log_step("Strong SVs: SVs in CDS, splicing or regulatory regions, or P/LP in ClinVar", nrow(strong_SV))
 
 ############################################################################
 # WRITE OUT THE DATA
