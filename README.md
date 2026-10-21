@@ -83,7 +83,7 @@ This workflow enables identification of genes impacted by multiple variant class
 
 ## Example Workflow
 
-Detailed instructions, required columns, filtering thresholds, scoring rules, output descriptions, and a complete end-to-end example are provided in [HowToUse.md]([Sample Files and Walkthrough/HowToUse.md](https://github.com/AVincentLab/ReDGAP/blob/main/Sample%20Files%20and%20Walkthrough/HowToUse.md)). A brief overview of the [workflow](https://github.com/AVincentLab/ReDGAP/blob/main/Sample%20Files%20and%20Walkthrough/HowToUse.md#walkthrough) is also included.
+Detailed instructions, required columns, filtering thresholds, scoring rules, output descriptions, and a complete end-to-end example are provided in [HowToUse.md](https://github.com/AVincentLab/ReDGAP/blob/main/Sample%20Files%20and%20Walkthrough/HowToUse.md). A brief overview of the [workflow](https://github.com/AVincentLab/ReDGAP/blob/main/Sample%20Files%20and%20Walkthrough/HowToUse.md#walkthrough) is also included.
 
 ---
 ## Repository Structure
