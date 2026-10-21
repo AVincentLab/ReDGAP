@@ -6,7 +6,7 @@ Note: The ReDGAP scripts were written to filter through variants files annotated
 
 ---
 
-## 1. SNV Pipeline 
+## **SNV Pipeline** 
 
 The SNV pipeline filters, scores, and ranks small variants (SNVs and indels). The script is written to filter and find strong SNVs (i.e. predicted as damaging, deleterious, conserved or splicing), SNVs found on ClinVar, and SNVs that match an optional panel list of genes given. 
 
@@ -21,6 +21,7 @@ Files must be in a tabular format and supported extensions are: `tsv`, `csv`, `t
 | **dbscSNV_RF_SCORE** | Splice prediction score from dbscSNV. Used for splice variant prioritization (Random Forest score ≥ 0.6). |
 | **effect_priority** | Functional consequence annotation. Used to identify loss-of-function, frameshift, stopgain, stoploss, startloss, startgain, and nonframeshift variants. |
 | **dbsnp_region** | Used to filter nonframeshift insertion/deletion variants based on the number of dbSNP entries in the region. |
+
 Note: The script as written should be modified if the above columns are missing from the annotated variant file
 
 **Optional Columns**
@@ -119,12 +120,51 @@ Variants are scored (**VScore**) to help prioritise which ones to explore first.
 <img width="1350" height="727" alt="SNV_VScore_Chart" src="https://github.com/user-attachments/assets/c5f5dab7-a7bc-4e95-b6d7-7b8da066b5f3" />
 
 
+---
+
+## **SV & CNV Pipelines**
+The scripts for filtering structural variants (SV) and copy number variants (CNV) are very similar.
+
+### Output Workbook
+The SV and CNV scripts will output an excel workbook with five to seven sheets. There are two *optional* sheets added when the user decides to provide a panel gene list.
+
+| Sheet Name | Description |
+| :--- | :--- |
+| **X_Analysis_Pipeline** | A summary sheet of the steps in the filtering and the number of variants removed or kept |
+| **Strong_X** | The variants that are predicted to have a high impact. The list of variants that are included in at least one of the following categories: Pathogenic or likely pathogenic in ClinVar, are present in the coding region of genes (`cds_symbol`), are near a canonical splice site (<20bp), or have a non-zero FANTOM5 |
+| **rare_X** | The variants that have passed through the frequency filtering |
+| **Genic_X** | The variants that include genes in `gene_symbol` |
+| **clin_db_X** | The variants that have a ClinVar designation as pathogenic, likely pathogenic, or uncertain significance OR overlap with variants from either ClinGen or DECIPHER databases by 30% |
+| **Panel_X** | *OPTIONAL* The variants that match the the gene panel provided by user |
+| **Panel_list** | *OPTIONAL* List of the panel genes used |
+
+*NOTE: The "X" in the Sheet Name of the workbook will be either "SV" or "CNV" depending on the script run.
+
+### Panel Gene List
+Users can decide to add a list of panel genes which are genes of interest that you want to keep variants for. This list should be a `txt` file with a column header of `gene_symbol` followed by a gene per line. 
+
+### Allele Frequency Filtering
+Variants are filtered to subset for rarity.
+
+| Filter | Database / Resource | Filter Threshold |
+| :--- | :--- | :--- |
+| **gnomADv4.1_SV_MAF** | Maximum population allele frequency of a matching structural variant in gnomAD v4.1 (calculated using a strict 90% reciprocal overlap threshold) | Keep SVs with MAF ≤ 0.5% (0.005) |
+| **otgMantaPctFreq_90pctRecOvlp** | atching structural variant in the 1000 Genomes Project callset generated with Manta (90% reciprocal overlap threshold) | Keep SVs with MAF ≤ 0.5% (0.005) |
+| **otgDellyPctFreq_90pctRecOvlp** | Matching structural variant in the 1000 Genomes Project callset generated with Delly (90% reciprocal overlap threshold) | Keep SVs with MAF ≤ 0.5% (0.005) |
+| **otgDgnPctFreq_90pctRecOvlp** | Allele frequency of a matching structural variant in the 1000 Genomes Project callset generated with DRAGEN (90% reciprocal overlap threshold) | Keep SVs with AF ≤ 0.5% (0.005) |
+| **all_DgnPctFreq_90pctRecOvlp** | Allele frequency of a matching structural variant in an internal database of ~10,600 unrelated samples called with DRAGEN (90% reciprocal overlap threshold) | Keep SVs with AF ≤ 0.5% (0.005) |
+| **nstd186_pctOvlp** | Minor allele frequency of a matching structural variant in the NCBI curated common SV dataset nstd186 | Keep SVs with MAF ≤ 1.0% (0.01) |
+| **DGV_commonPct** | Reciprocal overlap with common structural variants (>1% frequency) from the Database of Genomic Variants (DGV) | Keep SVs with <80% overlap with common DGV variants |
+
+### Scoring Variants
+Variants are scored (**VScore**) to help prioritise which ones to explore first. 
+<img width="1350" height="576" alt="SV_VScore_Chart" src="https://github.com/user-attachments/assets/344df0d0-cd86-4afe-bdee-341a3c8cb110" />
 
 
-## 2. SV Pipeline
+---
+## **Inheritance Filtering**
 
-## 3. CNV Pipeline
-
-## 4. Inheritance Filtering
+---
+## **Walkthrough**
 
 ---
