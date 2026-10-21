@@ -87,7 +87,7 @@ Detailed instructions, required columns, filtering thresholds, scoring rules, ou
 
 ---
 ## Repository Structure
-
+```
 ReDGAP/
 ├── scripts/
 │   ├── ReDGAP_SNV_GRCh38_TCAG_pipeline28_5.R
@@ -101,7 +101,7 @@ ReDGAP/
 │   └── Sample_CNV_Input.* 
 ├── LICENSE
 └── README.md
-
+```
 ---
 ## License
 
