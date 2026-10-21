@@ -11,7 +11,7 @@ Note: The ReDGAP scripts were written to filter through variants files annotated
 The SNV pipeline filters, scores, and ranks small variants (SNVs and indels). The script is written to filter and find strong SNVs (i.e. predicted as damaging, deleterious, conserved or splicing), SNVs found on ClinVar, and SNVs that match an optional panel list of genes given. 
 
 ### Input Requirements  
-Files must be in a tabular format and supported extensions are: 'tsv', 'csv', 'txt', 'dsv'. 
+Files must be in a tabular format and supported extensions are: `tsv`, `csv`, `txt`, `dsv`. 
 
 **Required Columns**
 | Column Name | General Purpose |
@@ -86,7 +86,7 @@ The SNV script will output an excel workbook with three to five sheets. There ar
 
 | Sheet Name | Description |
 | :--- | :--- |
-| **SNV_Filter_H...** | A summary sheet of the steps in the filtering and the number of variants removed or kept|
+| **SNV_Filter_History** | A summary sheet of the steps in the filtering and the number of variants removed or kept|
 | **strong_SNV** | The variants that are predicted as damaging, deleterious, conserved or splicing. A group list of variants that are included at least one of the following categories: Pathogenic or likely pathogenic in ClinVar, have some effect (i.e. "stopgain", "frameshift", etc.), pass at least two in-silico predictors, have a FANTOM5 score = 2, have a spiceAI score >= 0.1 OR dbscSNV (ADA or RF) >= 0.6, OR have a promoterAI score > 0.1 |
 | **ClinVar** | The variants that have a ClinVar designation as pathogenic, likely pathogenic, or uncertain significance |
 | **Panel** | *OPTIONAL* The variants that match the the gene panel provided by user |
@@ -116,28 +116,8 @@ Variants are filtered to subset for rarity.
 ### Scoring Variants
 Variants are scored (**VScore**) to help prioritise which ones to explore first. 
 
-| Category | Criterion / Feature Name | Cutoff / Condition Threshold | Points Added |
-| :--- | :--- | :--- | :--- |
-| **Gene Panel** | Panel Match | Matches any gene in user-provided panel list | +50.0 |
-| **ClinVar** | Pathogenic / Likely Pathogenic | Contains "Pathogenic" or "Likely_pathogenic" (excluding conflicting) | +30.0 |
-| | VUS | Contains "Uncertain" | +2.0 |
-| **Effect Priority** | High Impact (LOF) | Equals 'frameshift deletion', 'frameshift insertion', or 'stopgain’ | +15.0 |
-| | Moderate Impact | Equals 'nonframeshift insertion', 'nonframeshift deletion', 'startloss', or 'stoploss' | +5.0 |
-| **SpliceAI (delta)** | Strong Splice Impact | ≥0.20 (close to 1 High-confidence splice alteration: acceptor/donor-gain/loss). | +1.0 |
-| | Moderate Splice Impact | ≥0.10 and <0.20 | +0.5 |
-| **In-Silico Predictors** | Pathogenicity Vote Ensemble | At least 1 predictor passes threshold (If a variant meets or passes a predictor's threshold, that predictor registers 1 score, e.g., predVote = predVote + 1): | +1.0 |
-| | * phyloP Mammalian | ≥1.5 | |
-| | * phyloP Vertebrate 100 | ≥4.0 | |
-| | * PROVEAN | ≤−2.5 | |
-| | * CADD Phred | ≥15.0 | |
-| | * AlphaMissense | ≥0.8 | |
-| | * PrimateAI-3D | ≥0.8 | |
-| | * MPC Score | ≥2.0 | |
-| | * REVEL Score | ≥0.5 | |
-| **Phenotype Match** | MPO Phenotype | Contains "vision", "eye", "retina", or "macula" | +0.5 |
-| | HPO Phenotype | Contains "vision", "eye", "retina", or "macula" | +0.5 |
-| **Regulatory / Non-Coding**| FANTOM5 DPI | Equals 2 | +0.5 |
-| | Promoter AI | Absolute value \|promoterAInum\| > 0.10 | +0.5 |
+<img width="1350" height="727" alt="SNV_VScore_Chart" src="https://github.com/user-attachments/assets/c5f5dab7-a7bc-4e95-b6d7-7b8da066b5f3" />
+
 
 
 
