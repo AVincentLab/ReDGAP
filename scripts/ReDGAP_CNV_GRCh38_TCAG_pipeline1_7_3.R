@@ -218,7 +218,7 @@ cat("Keeping CNVs with frequency lower than 0.5% in large databases (1% in NCBI 
 # Written as a tribble so it is easy to change the rules by row (more human readable)
 af_filters <- tibble::tribble(
   ~col,                            ~op,   ~cutoff, ~label,
-  "gnomAD_SF_MAX_max50pctRecOvlp", "<=",  0.005,   "Removed SVs with MAF > 0.5% in gnomADv4.1",
+  "gnomAD_AF_MAX_max50pctRecOvlp", "<=",  0.005,   "Removed CNVs with MAF > 0.5% in gnomADv4.1",
   "otgErdsPctFreq_50pctRecOvlp",   "<=",  0.5,     "Removed CNVs with MAF > 0.5% in 1000g+ called with ERDS",
   "otgCnvnPctFreq_50pctRecOvlp",   "<=",  0.5,     "Removed CNVs with MAF > 0.5% in 1000g+ called with CNVnator.",
   "otgDgnPctFreq_50pctRecOvlp",    "<=",  0.5,     "Removed CNVs with AF > 0.5% in 1000g+ called with Dragen.",
