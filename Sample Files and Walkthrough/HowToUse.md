@@ -10,6 +10,8 @@ Note: The ReDGAP scripts were written to filter through variants files annotated
 
 The SNV pipeline filters, scores, and ranks small variants (SNVs and indels). The script is written to filter and find strong SNVs (i.e. predicted as damaging, deleterious, conserved or splicing), SNVs found on ClinVar, and SNVs that match an optional panel list of genes given. 
 
+*NOTE: This script is written to score variants associated with IRDs using keywords in MPO and HPO terms. This can be changed to score based on other keywords by modifying the PHENO_TERMS variable in the SNV script. Current terms are "vision", "eye", "retina", "macula".* 
+
 ### Input Requirements  
 Files must be in a tabular format and supported extensions are: `tsv`, `csv`, `txt`, `dsv`. 
 
